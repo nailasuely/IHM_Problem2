@@ -8,7 +8,7 @@
 */
 .macro MemoryMap
     @sys_open
-    LDR R0, =fileName @ R0 = nome do arquivo
+    LDR R0, =devMem @ R0 = nome do arquivo
     MOV R1, #2 @ O_RDWR (permissao de leitura e escrita pra arquivo)
     MOV R7, #5 @ sys_open
     SVC 0
@@ -114,6 +114,7 @@
                 que representa o pino
 ======================================================
 */
+/*
 FGPIOPinHigh:
     LDR R2, [R0, #8] @ offset do pino no registrador de dados
     LDR R1, [R0, #12] @ offset do registrador de dados do pino
@@ -123,8 +124,7 @@ FGPIOPinHigh:
     ORR R5, R4 @ insere 1 na posicao anteriormente deslocada
     STR R5, [R8, R1] @ armazena o novo conteudo do registrador de dados na memoria
     BX LR
-
-
+*/
 /*
 ======================================================
         Altera o estado de ~pin~
@@ -163,6 +163,29 @@ FGPIOPinLow:
     AND R3, R4 @ leitura do bit
     LSR R1, R3, R2 @ deslocamento do bit para o LSB
 .endm
+
+.macro GPIOPinEstado pin
+    LDR R0, =\pin
+    LDR R2, [R0, #8] @ offset do pino no registrador de dados
+    LDR R1, [R0, #12] @ offset do registrador de dados do pino
+    LDR R3, [R8, R1] @ endereco base + registrador de dados
+    MOV R4, #1 @ move 1 para R4
+    LSL R4, R2 @ desloca o que tem em R4 para R4, R2 vezes
+    AND R3, R4 @ leitura do bit
+    LSR R1, R3, R2 @ deslocamento do bit para o LSB
+.endm
+
+.macro GPIOPinEntrada pin
+    LDR R0, =\pin       @ carrega o endereco de memoria de ~pin~
+    LDR R1, [R0, #0]    @ offset do registrador de funcao do pino
+    LDR R2, [R0, #4]    @ offset do pino no registrador de funcao (LSB)
+    LDR R5, [R8, R1]     @ conteudo do registrador de dados do pino
+    MOV R0, #0b111       @ mascara para limpar 3 bits
+    LSL R0, R2           @ desloca @111 para posicao do pino no registrador de funcao
+    BIC R5, R0           @ limpa os 3 bits da posicao
+    STR R5, [R8, R1]    @ armazena o novo valor do registrador de funcao na memoria
+.endm
+
 
 
 /*

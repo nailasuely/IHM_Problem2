@@ -137,6 +137,19 @@
 	enable
 .endm
 
+LimpeDisplay:
+	GPIOPinLow RS
+
+	GPIOPinLow d7
+	GPIOPinLow d6
+	GPIOPinLow d5
+	GPIOPinLow d4
+	enable
+	
+	GPIOPinHigh d4
+	enable
+    
+    bx lr
 @ configuraçõe da instrução pra setar a segunda linah do display 
 @ a segunda linha está 40 bits a mais que a base da primeira
 .macro twoLine
@@ -277,7 +290,19 @@
 	enable
 .endm
 
+segundaLinha:
+	GPIOPinLow RS
+	
+	GPIOPinHigh d7	
+	GPIOPinLow d5	
+	GPIOPinHigh d6	
+	GPIOPinLow d4
+	enable
 
+	GPIOPinLow d7	
+	GPIOPinLow d6	
+	enable
+    bx lr
 /*
 ======================================================
 	Desloca o cursor do display LCD para a direita

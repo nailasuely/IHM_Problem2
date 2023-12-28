@@ -62,6 +62,10 @@ Em seguida, progredimos para a etapa subsequente, na qual desenvolvemos as macro
 
 Em seguida, progredimos para a etapa subsequente, na qual desenvolvemos as macros essenciais para a exibição de caracteres na tela. Essas macros estão contidas no módulo "lcd.s", que desempenha o papel fundamental de controlar o display LCD de 16 colunas e 2 linhas ([componente 4, imagem XX](https://github.com/nailasuely/IHM_Problem2/blob/main/resources/1.png)) e integrar as funcionalidades para garantir a apresentação adequada das interfaces. 
 
+<p align="center">
+  <img width="600px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/1.png" />
+</p>
+
 
 O chip HD44780 controla funções como alimentação, dados e ajuste de contraste por meio de 14 pinos:
 - Vss (GND): Terra.

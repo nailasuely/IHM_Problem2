@@ -121,6 +121,23 @@ A comunicação segue etapas:
     ```
     Esses comandos montam o código assembly, conectam os módulos e executam o programa final.
 
+## Testes
+
+Ao longo do desenvolvimento do protótipo e após sua conclusão, foram conduzidas séries de testes para avaliar o desempenho do sistema e garantir sua operação conforme as expectativas
+
+
+Na fase inicial dos testes, para verificar o funcionamento do código da UART, conectamos o sistema a um osciloscópio com o intuito de visualizar sinais elétricos ao longo do tempo e confirmar se os dados estavam sendo enviados e recebidos de maneira adequada.
+
+Ao analisarmos os resultados no osciloscópio, tornou-se evidente que os dados estavam sendo transmitidos e recebidos conforme o esperado. Os sinais apresentaram padrões consistentes (Imagem XX), indicando uma comunicação estável entre os dispositivos. Esse teste inicial foi crucial para demonstrar ao grupo que as informações enviadas pelos sensores e outros componentes estavam sendo corretamente recebidas e interpretadas pelo sistema. Essa validação inicial permitiu a continuidade das etapas subsequentes do código, as quais foram implementadas e testadas utilizando os componentes disponíveis na placa.
+
+
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/72e70ac5-448c-437c-b129-fc999a173326
+
+
+
+
+
 ## Tutor 
 - Anfranserai Morais Dias
 

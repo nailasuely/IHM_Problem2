@@ -125,14 +125,22 @@ A comunicação segue etapas:
 
 Ao longo do desenvolvimento do protótipo e após sua conclusão, foram conduzidas séries de testes para avaliar o desempenho do sistema e garantir sua operação conforme as expectativas
 
-
 Na fase inicial dos testes, para verificar o funcionamento do código da UART, conectamos o sistema a um osciloscópio com o intuito de visualizar sinais elétricos ao longo do tempo e confirmar se os dados estavam sendo enviados e recebidos de maneira adequada.
 
 Ao analisarmos os resultados no osciloscópio, tornou-se evidente que os dados estavam sendo transmitidos e recebidos conforme o esperado. Os sinais apresentaram padrões consistentes (Imagem XX), indicando uma comunicação estável entre os dispositivos. Esse teste inicial foi crucial para demonstrar ao grupo que as informações enviadas pelos sensores e outros componentes estavam sendo corretamente recebidas e interpretadas pelo sistema. Essa validação inicial permitiu a continuidade das etapas subsequentes do código, as quais foram implementadas e testadas utilizando os componentes disponíveis na placa.
 
+<p align="center">
+  <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/MAP001.png" />
+</p>
 
+<p align="center">
+  <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/MAP002.png" />
+</p>
 
-https://github.com/nailasuely/IHM_Problem2/assets/98486996/72e70ac5-448c-437c-b129-fc999a173326
+Logo depois foram realizados testes voltados para a verificação da navegação no MENU (Video 1), onde a interação com os botões era testada para assegurar que as transições entre as telas ocorressem conforme o esperado. 
+
+Em outro teste realizado (Video 2), simulou-se a ausência de um sensor no sistema, no qual, mesmo não havendo um sensor fisicamente conectado, a interface foi projetada para detectar essa condição e exibir a mensagem "SENSOR AUSENTE". Este teste foi para garantir que o sistema era capaz de identificar corretamente a ausência de sensores, fornecendo uma resposta adequada ao usuário.
+Em seguida, um segundo foi conduzido com um sensor conectado, no caso, o sensor 15 (DHT11). A situação do sensor foi verificada, e a interface exibiu a mensagem "Situação do Sensor: OK" para indicar que o sensor estava operando conforme o esperado.
 
 
 

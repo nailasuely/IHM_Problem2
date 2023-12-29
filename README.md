@@ -18,6 +18,7 @@ gh repo clone nailasuely/IOInterfacesProblem1
 	
 ## Sumário
 - [Apresentação](#apresentação)
+- [Documentação utilizada](#documentacao-utilizada)
 - [Implementação](#implementação)
 - [Executando o Projeto](#executando-o-projeto)
 - [Testes](#testes)
@@ -28,13 +29,18 @@ gh repo clone nailasuely/IOInterfacesProblem1
 
   
 ## Apresentação 
-Este documento detalha o desenvolvimento de uma comunicação UART entre um microcontrolador ESP e um computador de placa única Orange Pi PC Plus, além de um sistemas de menus para uso pelo usuário, utilizando a linguagem assembly da arquitetura ARM V7. O projeto consiste em um sistema que tem
 
-
-
- como objetivo viabilizar a comunicação com sensores, especialmente o DHT11. Para visualização dos dados requisitados, um display LCD 16x2 é utilizado, proporcionando uma apresentação humanamente agradável  das informações.
+Este documento detalha o desenvolvimento de uma comunicação UART entre um microcontrolador ESP e um computador de placa única Orange Pi PC Plus, além de um sistemas de menus para uso pelo usuário, utilizando a linguagem assembly da arquitetura ARM V7. O projeto consiste em um sistema que tem como objetivo viabilizar a comunicação com sensores, especialmente o DHT11. Para visualização dos dados requisitados, um display LCD 16x2 é utilizado, proporcionando uma apresentação humanamente agradável  das informações.
 
 Para estabelecer a comunicação com o sensor, empregou-se o projeto do monitor de Sistemas Digitais desenvolvido por Paulo Queiroz durante o semestre 2023.2 na UEFS. No [repositório correspondente](https://github.com/PauloQueirozC/EspCodigoPBL2_20232), estão disponíveis informações detalhadas sobre os comandos utilizados e suas respectivas respostas.
+
+## Documentação utilizada
+
+- Datasheet da H3 AllWinner: Contém todas as informações relacionadas ao funcionamento dos pinos da SBC Orange Pi Pc Plus, bem como seus endereços de memória. Além disso, o documento conta também com informações sobre como acessar e enviar ou receber dados para os pinos de entrada e saída de propósito geral (GPIO). Também é utilizado no projeto para obter as informações de como realizar o modelo de comunicação Uart e seus respectivos pinos.
+
+- Datasheet do display LCD: O modelo do display LCD é o Hitachi HD44780U, e sua documentação nos permite descobrir o algoritmo responsável pela inicialização do display bem como o tempo de execução de cada instrução, que precisa seguir uma sequência específica para inicialização correta, além da representação de cada caractere em forma de número binário.
+
+- Raspberry Pi Assembly Language Programming, ARM Processor Coding: Livro que mostra diversos casos de exemplo na prática do uso da linguagem Assembly na programação de dispositivos de placa única, no livro foi usado a Raspberry Pi. No projeto foi utilizado a placa Orange Pi que tem diversas similaridades com as Raspberry.
 
 ## Implementação
 
@@ -99,6 +105,10 @@ A comunicação segue etapas:
 	Para essas últimas etapas enumeradas, outras macros são utilizadas. Um exemplo, é a “twoLine” que foi projetada para o LCD operar com duas linhas, destacando que a segunda linha está localizada 40 		bits além da base da primeira linha. A configuração se inicia com os pinos D7, D6, D5 e D4 que alternam entre níveis alto e baixo. Também ocorre a geração de pulso de Enable para ativar o processo de 	leitura e interpretação das configurações e consolida a configuração com outro pulso adicional nos pinos D7 e D6. 
 
 	Outro exemplo, é a macro “writeCharLCD” que como seu próprio nome diz ela é capaz de escrever um caractere no display. Com esse propósito, primeiro é configurado o pino RS para indicar que será 		enviado um dado, que nesse caso é o caractere ao invés de uma instrução. Necessariamente uma série de instruções são utilizadas para configurar os pinos D7, D6, D5 E D4  tendo como base o valor do 		caractere fornecido (hex, parâmetro da macro). Logo, para cada um desses pinos o estado do bit correspondente ao valor do caractere é verificado e o pino é setado com base nele. Isso é feito chamando 	a macro GPIOPinTurn que por sua vez utiliza a macro GPIOInState para obter e configurar o estado do bit. Após todo esse processo, um pulso de enable é enviado para indicar que os dados estão prontos 		para serem lidos e depois ocorre uma limpeza dos pinos utilizados para evitar conflitos ou interferências que não são desejadas.
+
+	Para imprimir texto na tela, conforme visualizado nas telas da imagem XX, é necessário operar com a macro "writeCharLCD". No entanto, como essa macro escreve apenas um caractere, é essencial implementar uma lógica para seu uso conforme desejado. Para isso, é preciso indicar dois registradores para apontar a parte da memória onde a variável com o texto está armazenada, um para cada registrador. Após essa etapa, pode-se utilizar a função "escreverLinhas", que segue uma lógica de salvar inicialmente o valor do registrador LR (que guarda o endereço da chamada da função) na pilha. Em seguida, executa a macro de limpeza do display, "Clear Display", e atribui valores a dois registradores: um para definir quantos caracteres serão escritos por linha e o segundo, inicializado como zero, atua como contador. Uma função auxiliar chamada "Escrita" implementa a lógica de escrever caractere a caractere. Esta função também salva o endereço da chamada dela e inicia o loop para escrever cada caractere, incrementando o contador. Quando esse contador iguala ao valor atribuído a um registrador anteriormente, a função é encerrada, pois o papel de escrever naquela linha foi concluído. Após essa etapa, o cursor é movido para a segunda linha para repetir o procedimento de configuração de registradores. No entanto, o valor do segundo registrador, inicialmente configurado antes de iniciar a função, é movido para outro usado na função auxiliar. Após a conclusão do procedimento, ao retornar ao local da chamada, o valor do registrador LR é restaurado ao que foi salvo na pilha, permitindo executar a instrução de retorno à chamada da função "EscreverLinhas".
+
+	É importante notar que em situações envolvendo a apresentação de valores numéricos, a lógica de exibição passa por algumas alterações. Para isso, primeiro realiza-se a separação dos dígitos do valor recebido, a fim de escrever cada dígito separadamente na tela por meio da macro "WriteCharLCD". Sem essa operação, seria apresentado um caractere correspondente da tabela ASCII, não o valor numérico desejado. Nessa operação, é necessário pegar o valor completo, dividi-lo por 10 para obter o primeiro dígito do número. Em seguida, multiplica-se esse número por 10 e subtrai-o do valor inicial para obter o segundo dígito. Antes de apresentar na tela, soma-se 48 para obter o código correspondente a esse dígito na tabela ASCII. Por exemplo, com o valor inicial 64, ao dividir por 10, obtemos 6, que é o primeiro dígito. Em seguida, multiplicamos 6 por 10, resultando em 60. Ao subtrair 64 por 60, obtemos 4, que é o segundo dígito. Após escrever os dois dígitos do valor recebido, a função "ESCRITA" é utilizada para escrever na primeira linha. Em seguida, é chamada a macro para mudar o cursor para a segunda linha, e a função "ESCRITA" realiza novamente a mesma operação.
 
 
  

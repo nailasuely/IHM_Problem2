@@ -283,7 +283,8 @@ O vídeo a seguir apresenta a interação com todas as funções do projeto, mos
 > - [1] Smith, Stephen. (2019). Raspberry Pi Assembly Language Programming: ARM Processor Coding. Apress.
 > - [2]  Allwinner. (2015). Allwinner H3 Datasheet Quad-Core OTT Box Processor.
 > - [3] Queiroz, P. (2023). EspCodigoPBL2_20232. GitHub. https://github.com/PauloQueirozC/EspCodigoPBL2_20232
-
+> - [4] traozin. (2022). IOInterface. GitHub. https://github.com/traozin/IOInterface
+> - [5] arlosValadao. (2023). P2-SD. GitHub. https://github.com/arlosValadao/P2-SD
 
 
 </div>

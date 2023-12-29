@@ -143,10 +143,33 @@ Ao analisarmos os resultados no osciloscópio, tornou-se evidente que os dados e
 
 Logo depois foram realizados testes voltados para a verificação da navegação no MENU (Video 1), onde a interação com os botões era testada para assegurar que as transições entre as telas ocorressem conforme o esperado. 
 
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/a10ccb69-e79f-4363-9703-53e6418fb591
+
 Em outro teste realizado (Video 2), simulou-se a ausência de um sensor no sistema, no qual, mesmo não havendo um sensor fisicamente conectado, a interface foi projetada para detectar essa condição e exibir a mensagem "SENSOR AUSENTE". Este teste foi para garantir que o sistema era capaz de identificar corretamente a ausência de sensores, fornecendo uma resposta adequada ao usuário.
-Em seguida, um segundo foi conduzido com um sensor conectado, no caso, o sensor 15 (DHT11). A situação do sensor foi verificada, e a interface exibiu a mensagem "Situação do Sensor: OK" para indicar que o sensor estava operando conforme o esperado.
+Em seguida, um segundo foi conduzido com um sensor conectado, no caso, o sensor 15 (DHT11). A situação do sensor foi verificada, e a interface exibiu a mensagem "Situação do Sensor: OK" para indicar que o sensor estava operando corretamente.
 
 https://github.com/nailasuely/IHM_Problem2/assets/98486996/416475fb-da7c-4d49-b050-cae51b178c3a
+
+Também foi feito o teste para simular o uso de um sensor no sistema, no qual, este mesmo sensor estava com mal funcionamento, a interface foi projetada para detectar essa condição e exibir a mensagem "SENSOR C. PROB". Este teste foi para garantir que o sistema era capaz de identificar corretamente caso fosse utilizado um sensor que não estivesse funcionando em suas capacidades habituais, fornecendo uma resposta adequada ao usuário. Nessa etapa, o grupo testou com um sensor queimado e removendo o sensor 15 e ambos os resultados seguiram o roteiro esperado.
+
+Agora, ao avançarmos para as solicitações de medidas, inicialmente, requisitamos a medição da umidade ao sensor 15, obtendo uma resposta de 39% no local onde a medição do vídeo foi realizada. 
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/bf928c27-3616-447f-a04d-6555728b83ee
+
+Além disso, em outro teste subsequente (Video 5), solicitamos a medição da temperatura ao mesmo sensor (DHT11), recebendo como resposta 23 graus Celsius no ambiente.
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/f4345cff-d9c6-43dc-9ed9-f2ff2643c4de
+
+Em seguida, para avaliar o funcionamento do fluxo contínuo, realizamos o teste da requisição ao sensor 15 (DHT11) para medição contínua de umidade (GIF 6). Essa operação envolve a comunicação entre a placa Orange Pi e o sensor, garantindo a atualização constante dos valores de umidade por tempo indeterminado, até que essa funcionalidade seja desativada.
+
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/bdbe814b-a7bd-4cf8-95ba-8e80fca12c0a
+
+
+O mesmo procedimento é aplicado para requisitar medição contínua de temperatura.
+
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/d661181e-ef60-474e-b6b0-0e84ff28518d
 
 
 

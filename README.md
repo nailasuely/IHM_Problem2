@@ -39,9 +39,12 @@ Este documento detalha o desenvolvimento de uma comunicação UART entre um micr
 
 Para estabelecer a comunicação com o sensor, empregou-se o projeto do monitor de Sistemas Digitais desenvolvido por Paulo Queiroz durante o semestre 2023.2 na UEFS. No [repositório correspondente](https://github.com/PauloQueirozC/EspCodigoPBL2_20232), estão disponíveis informações detalhadas sobre os comandos utilizados e suas respectivas respostas.
 
-<p align="center">
-  <img width="600px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/COMPUTADOR%20(4).png" />
-</p>
+
+<div align="center">
+    <img src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/COMPUTADOR%20(4).png" alt="Ligação entre os Componentes">
+    <p> Fig 1. Configuração e Interconexão dos Componentes</p>
+</div>
+
 
 ## Documentação utilizada
 
@@ -74,12 +77,13 @@ O hardware empregado para a síntese e testes deste projeto é uma Orange PI PC 
 
 ## Implementação
 
-Para a compreensão do problema, foi necessário avaliar qual seria a estrutura utilizada para  a organização das telas, bem como ao entendimento dos fluxos normal e contínuo durante a execução do código. Essa análise, foi essencial para o desenvolvimento do sistema, resultou na criação de uma estrutura (Imagem XX)  que passou por diversas modificações ao longo do processo de codificação. Isso foi feito para destacar não apenas as telas que seriam utilizadas, mas também para ilustrar de que maneira essas telas interagiriam com os botões que são elementos importantes para a navegação e seleção de telas.
+Para a compreensão do problema, foi necessário avaliar qual seria a estrutura utilizada para  a organização das telas, bem como ao entendimento dos fluxos normal e contínuo durante a execução do código. Essa análise, foi essencial para o desenvolvimento do sistema, resultou na criação de uma estrutura (Figura 2)  que passou por diversas modificações ao longo do processo de codificação. Isso foi feito para destacar não apenas as telas que seriam utilizadas, mas também para ilustrar de que maneira essas telas interagiriam com os botões que são elementos importantes para a navegação e seleção de telas.
 
 A estrutura final, que acompanha o fluxo do sistema exibido no LCD, está apresentada na imagem abaixo. Detalharemos essa organização ao decorrer deste tópico, fornecendo uma explicação do desenvolvimento dos módulos codificados em assembly que tornaram possível o funcionamento de cada tela específica.  A imagem representa uma síntese de inúmeras telas e como elas podem funcionar no sistema.
 
 <p align="center">
   <img width="" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/2.1.png" />
+	Fig 2. Estrutura do protótipo
 </p>
 
 Na fase inicial do desenvolvimento do projeto, focamos na criação das interfaces visuais, sendo essencial compreender o funcionamento do GPIO (General Purpose Input/Output). Para atingir o funcionamento de maneira eficaz, desenvolvemos o módulo "gpio.s".
@@ -100,11 +104,15 @@ Em seguida, progredimos para a etapa subsequente, na qual desenvolvemos as macro
 
 ### LCD
 
-Em seguida, progredimos para a etapa subsequente, na qual desenvolvemos as macros essenciais para a exibição de caracteres na tela. Essas macros estão contidas no módulo "lcd.s", que desempenha o papel fundamental de controlar o display LCD de 16 colunas e 2 linhas ([componente 4, imagem XX](https://github.com/nailasuely/IHM_Problem2/blob/main/resources/1.png)) e integrar as funcionalidades para garantir a apresentação adequada das interfaces. 
+Em seguida, progredimos para a etapa subsequente, na qual desenvolvemos as macros essenciais para a exibição de caracteres na tela. Essas macros estão contidas no módulo "lcd.s", que desempenha o papel fundamental de controlar o display LCD de 16 colunas e 2 linhas ([componente 4, Figura 3](https://github.com/nailasuely/IHM_Problem2/blob/main/resources/1.png)) e integrar as funcionalidades para garantir a apresentação adequada das interfaces. 
 
-<p align="center">
-  <img width="600px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/1.png" />
+	  
 </p>
+<div align="center">
+    <img width="600px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/1.png" /> 
+    <p> Fig 3. Componentes</p>
+</div>
+
 
 
 O chip HD44780 controla funções como alimentação, dados e ajuste de contraste por meio de 14 pinos:
@@ -116,11 +124,14 @@ O chip HD44780 controla funções como alimentação, dados e ajuste de contrast
 - E (Habilita): Liga ou desliga o LCD.
 - DB0-DB7 (Barramento de Dados): Transmite informações.
 
-A escolha entre instruções (RS=0) e dados (RS=1) ocorre via RS e com a configuração dos pinos, exemplificada com detalhes na imagem XX. 
+A escolha entre instruções (RS=0) e dados (RS=1) ocorre via RS e com a configuração dos pinos, exemplificada com detalhes na Figura 4. 
 
-<p align="center">
-  <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/assets/98486996/78349e83-61d0-4293-adbc-82fc2a3deb29" />
 </p>
+<div align="center">
+   <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/assets/98486996/78349e83-61d0-4293-adbc-82fc2a3deb29" />
+    <p> Fig 4. Configuração do diplay de acordo com o DataSheet</p>
+</div>
+
 
 A comunicação segue etapas:
 
@@ -152,15 +163,18 @@ Para concluir a configuração da UART, foram necessárias diversas funções, c
 Além disso, "SetarValorDLL" e "SetarValorDLH" possuem configurações específicas para limpar os bits correspondentes ao divisor, para essa configuração foi necessário fazer uma conta para ter o valor em bínario para serem postos os 8 bits menos significativos no DLL e os demais bits mais significativos no DLH .Em seguimento ocorre desativação do DLAB, configurando o bit 7 como zero para restaurar o funcionamento normal da UART3. Por fim, a ativação do FIFO ocorre com o carregamento do conteúdo do registrador de controle de fluxo FIFO (FCR), um buffer que melhora a transmissão e recepção de dados aprimorando o desempenho geral da comunicação serial.Também existe duas funções que fazem a comunicação em si de fluxo de bits. Primeiramente a  função EnviarDados escreve dados no registrador THR (UART Transmit Holding Register) para iniciar a transmissão, e posteriormente a função ReceberDados verifica o status do registrador LSR (UART Line Status Register) para determinar se há dados no registrador RBR (UART Receive Buffer Register) antes de ler.
 
 ### Main
-O próximo estágio de desenvolvimento, visou tornar o sistema acessível a diversos usuários, então "main.s" foi introduzida para articular a interação entre os módulos falados anteriormente e integrar os recursos disponíveis, incluindo os três botões presentes na placa (Componente 1, 2 e 3, imagem XX). 
+O próximo estágio de desenvolvimento, visou tornar o sistema acessível a diversos usuários, então "main.s" foi introduzida para articular a interação entre os módulos falados anteriormente e integrar os recursos disponíveis, incluindo os três botões presentes na placa (Componente 1, 2 e 3, Figura 4). 
 
-Ao inicializar o programa, é apresentado 2 telas que só aparecem nesse momento, como podem ser vistas nas imagem X e X, a primeira desejando boas-vindas, e a segunda que apresenta uma leve explicação sobre o que cada botão faz para poder então preparar o usuário para navegar entre os menus, que estão estruturados conforme na parte “MENU” da imagem XX. Sendo então o botão 1 para voltar à página anterior, o botão 2 para selecionar a opção, e o botão 3 para avançar a opção.
+Ao inicializar o programa, é apresentado 2 telas que só aparecem nesse momento, como podem ser vistas na figura 5, a primeira desejando boas-vindas, e a segunda que apresenta uma leve explicação sobre o que cada botão faz para poder então preparar o usuário para navegar entre os menus, que estão estruturados conforme na parte “MENU” da imagem XX. Sendo então o botão 1 para voltar à página anterior, o botão 2 para selecionar a opção, e o botão 3 para avançar a opção.
 
 A operação lógica para que essas duas telas sejam apresentadas, ocorre inicialmente carregando em 2 registradores 2 variáveis, uma para cada registrador, que contém o texto da primeira linha, e o da segunda linha respectivamente. Com essa etapa feita é utilizado a função “escreverLinhas” para realizar a escrita do texto nas duas linhas do display, visando resultado ilustrado na imagem X, e para melhorar visualização é utilizada uma função “nanoSleep” para gerar uma pausa no sistema de 2 segundos, e assim só após esse tempo, repetir o processo de salvar outras variáveis nos registradores conforme já citado, e então executar o processo de escrita na tela, apresentando na tela informação conforme imagem X, e após utilizando a função “nanoSleep” novamente para poder interromper o sistema por 3 segundos, um tempo maior por conta da informação mais composta apresentada, e após esse tempo o fluxo do código é direcionado para a função que apresenta o menu inicial.
 
-<p align="center">
-	<img width="300px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/incio_telas.png" />
-	</p>
+ </p>
+<div align="center">
+   <img width="300px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/incio_telas.png" />
+    <p> Fig 5. Telas iniciais </p>
+</div>
+
 
 Conforme visto a lógica de exibição de texto para formar uma tela, ela persiste na exibição dos outros menus. Para cada uma das telas de menu há uma função, em que primeiramente é executado o processo de formar a tela, e após entrar em um loop para aguardar algum dos botões mudar de estado, ou seja ser pressionado, para definir a próxima etapa a ser executada. Havendo entre as telas de menu 3 opções: selecionar a opção, avançar para a próxima tela de menu, ou retornar para a tela de menu anterior. Enquanto nenhum botão é pressionado, permanece na mesma função e a mesma exibição na tela.
 
@@ -222,15 +236,23 @@ Ao longo do desenvolvimento do protótipo e após sua conclusão, foram conduzid
 
 Na fase inicial dos testes, para verificar o funcionamento do código da UART, conectamos o sistema a um osciloscópio com o intuito de visualizar sinais elétricos ao longo do tempo e confirmar se os dados estavam sendo enviados e recebidos de maneira adequada.
 
-Ao analisarmos os resultados no osciloscópio, tornou-se evidente que os dados estavam sendo transmitidos e recebidos conforme o esperado. Os sinais apresentaram padrões consistentes (Imagem XX), indicando uma comunicação estável entre os dispositivos. Esse teste inicial foi crucial para demonstrar ao grupo que as informações enviadas pelos sensores e outros componentes estavam sendo corretamente recebidas e interpretadas pelo sistema. Essa validação inicial permitiu a continuidade das etapas subsequentes do código, as quais foram implementadas e testadas utilizando os componentes disponíveis na placa.
+Ao analisarmos os resultados no osciloscópio, tornou-se evidente que os dados estavam sendo transmitidos e recebidos conforme o esperado. Os sinais apresentaram padrões consistentes (Figura 6 e 7), indicando uma comunicação estável entre os dispositivos. Esse teste inicial foi crucial para demonstrar ao grupo que as informações enviadas pelos sensores e outros componentes estavam sendo corretamente recebidas e interpretadas pelo sistema. Essa validação inicial permitiu a continuidade das etapas subsequentes do código, as quais foram implementadas e testadas utilizando os componentes disponíveis na placa.
 
-<p align="center">
-  <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/MAP001.png" />
-</p>
 
-<p align="center">
-  <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/MAP002.png" />
+
 </p>
+<div align="center">
+   <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/MAP001.png" />
+    <p> Fig 6. Resposta obtida da uart pelo oscilóscopio</p>
+</div>
+
+</p>
+<div align="center">
+   <img width="500px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/MAP002.png" />
+    <p> Fig 7. Resposta obtida da uart pelo oscilóscopio </p>
+</div>
+
+
 
 Logo depois foram realizados testes voltados para a verificação da navegação no MENU (Video 1), onde a interação com os botões era testada para assegurar que as transições entre as telas ocorressem conforme o esperado. 
 

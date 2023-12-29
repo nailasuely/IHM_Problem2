@@ -285,9 +285,14 @@ O mesmo procedimento é aplicado para requisitar medição contínua de temperat
 https://github.com/nailasuely/IHM_Problem2/assets/98486996/d661181e-ef60-474e-b6b0-0e84ff28518d
 
 ## Conclusão
-Por fim, o projeto foi concluído com êxito, visto que todos os testes obteve um resultado satisfatório. O objetivo do projeto era substituir a interface em C do projeto anterior para uma interface mais agradável, incorporando botões e uma tela LCD, permitindo assim uma interação mais direta. No entanto, a eficiência do código pode ser melhorada, uma vez que a UART é reconfigurada a cada vez que os dados são atualizados no modo monitoramento contínuo. Isso impacta na velocidade de atualização das informações.
+Por fim, o projeto foi concluído com êxito, uma vez que todos os testes apresentaram resultados satisfatórios. Dessa forma, podemos afirmar que as funções propostas para implementação foram bem-sucedidas. No entanto, há aspectos no projeto que podem ser aprimorados para otimizar seu funcionamento.
 
-O vídeo a seguir apresenta a interação com todas as funções do projeto, mostrando todo o funcionamento e todos seus usos. Além disso, também é um tutorial prático de como manipular o programa.
+Entre as possíveis melhorias, destaca-se a implementação de uma funcionalidade para salvar dados na memória. Isso proporcionaria uma simples persistência de dados durante a execução do código, eliminando a necessidade de escolher novamente o sensor ao desativar o modo de monitoramento contínuo. Basta recuperar o valor da memória associado ao sensor previamente escolhido, o que simplificaria o processo para o usuário.
+
+Outra área de aprimoramento está relacionada à otimização do uso da UART. Atualmente, a configuração completa da UART ocorre a cada uso, impactando a fluidez da interação do usuário. Buscar otimizações nesse sentido, permitindo que a UART não precise ser reconfigurada completamente a cada utilização, contribuiria para uma experiência mais suave e eficiente. 
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/79bd8c40-34a6-450e-87c3-ed490ecb5e7c
+
 
 
 ## Tutor 

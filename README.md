@@ -21,6 +21,10 @@ gh repo clone nailasuely/IOInterfacesProblem1
 - [Documentação utilizada](#documentação-utilizada)
 - [Hardware utilizado](#hardware-utilizado)
 - [Implementação](#implementação)
+  - [GPIO](#gpio)
+  - [LCD](#lcd)
+  - [UART](#uart)
+  - [Main](#main)
 - [Executando o Projeto](#executando-o-projeto)
 - [Testes](#testes)
 - [Conclusão](#conclusão) 
@@ -132,12 +136,63 @@ A comunicação segue etapas:
 
 	Outro exemplo, é a macro “writeCharLCD” que como seu próprio nome diz ela é capaz de escrever um caractere no display. Com esse propósito, primeiro é configurado o pino RS para indicar que será 		enviado um dado, que nesse caso é o caractere ao invés de uma instrução. Necessariamente uma série de instruções são utilizadas para configurar os pinos D7, D6, D5 E D4  tendo como base o valor do 		caractere fornecido (hex, parâmetro da macro). Logo, para cada um desses pinos o estado do bit correspondente ao valor do caractere é verificado e o pino é setado com base nele. Isso é feito chamando 	a macro GPIOPinTurn que por sua vez utiliza a macro GPIOInState para obter e configurar o estado do bit. Após todo esse processo, um pulso de enable é enviado para indicar que os dados estão prontos 		para serem lidos e depois ocorre uma limpeza dos pinos utilizados para evitar conflitos ou interferências que não são desejadas.
 
-	Para imprimir texto na tela, conforme visualizado nas telas da imagem XX, é necessário operar com a macro "writeCharLCD". No entanto, como essa macro escreve apenas um caractere, é essencial implementar uma lógica para seu uso conforme desejado. Para isso, é preciso indicar dois registradores para apontar a parte da memória onde a variável com o texto está armazenada, um para cada registrador. Após essa etapa, pode-se utilizar a função "escreverLinhas", que segue uma lógica de salvar inicialmente o valor do registrador LR (que guarda o endereço da chamada da função) na pilha. Em seguida, executa a macro de limpeza do display, "Clear Display", e atribui valores a dois registradores: um para definir quantos caracteres serão escritos por linha e o segundo, inicializado como zero, atua como contador. Uma função auxiliar chamada "Escrita" implementa a lógica de escrever caractere a caractere. Esta função também salva o endereço da chamada dela e inicia o loop para escrever cada caractere, incrementando o contador. Quando esse contador iguala ao valor atribuído a um registrador anteriormente, a função é encerrada, pois o papel de escrever naquela linha foi concluído. Após essa etapa, o cursor é movido para a segunda linha para repetir o procedimento de configuração de registradores. No entanto, o valor do segundo registrador, inicialmente configurado antes de iniciar a função, é movido para outro usado na função auxiliar. Após a conclusão do procedimento, ao retornar ao local da chamada, o valor do registrador LR é restaurado ao que foi salvo na pilha, permitindo executar a instrução de retorno à chamada da função "EscreverLinhas".
+	Para imprimir texto na tela, conforme visualizado nas telas da imagem XX, é necessário operar com a macro "writeCharLCD". No entanto, como essa macro escreve apenas um caractere, é essencial implementar uma lógica para seu uso conforme desejado. Para isso, é preciso indicar dois registradores para apontar a parte da memória onde a variável com o texto está armazenada, um para cada registrador. Após essa etapa, pode-se utilizar a função "escreverLinhas", que segue uma lógica de salvar inicialmente o valor do registrador LR (que guarda o endereço da chamada da função) na pilha. Em seguida, executa a macro de limpeza do display, "Clear Display", e atribui valores a dois registradores: um para definir quantos caracteres serão escritos por linha e o segundo, inicializado como zero, atua como contador. Uma função auxiliar chamada "Escrita" implementa a lógica de escrever caractere a caractere. Esta função também salva o endereço da chamada dela e inicia o loop para escrever cada caractere a cada passagem no loop, incrementando o contador. Quando esse contador iguala ao valor atribuído a um registrador anteriormente, a função é encerrada, pois o papel de escrever naquela linha foi concluído. Após essa etapa, o cursor é movido para a segunda linha para repetir o procedimento de configuração de registradores. No entanto, o valor do segundo registrador, que teve sua informação carregada nele antes de iniciar a função, é movido para outro usado na função auxiliar. Após a conclusão do procedimento, ao retornar ao local da chamada, o valor do registrador LR é restaurado ao que foi salvo na pilha, permitindo executar a instrução de retorno à chamada da função "EscreverLinhas".
 
-	É importante notar que em situações envolvendo a apresentação de valores numéricos, a lógica de exibição passa por algumas alterações. Para isso, primeiro realiza-se a separação dos dígitos do valor recebido, a fim de escrever cada dígito separadamente na tela por meio da macro "WriteCharLCD". Sem essa operação, seria apresentado um caractere correspondente da tabela ASCII, não o valor numérico desejado. Nessa operação, é necessário pegar o valor completo, dividi-lo por 10 para obter o primeiro dígito do número. Em seguida, multiplica-se esse número por 10 e subtrai-o do valor inicial para obter o segundo dígito. Antes de apresentar na tela, soma-se 48 para obter o código correspondente a esse dígito na tabela ASCII. Por exemplo, com o valor inicial 64, ao dividir por 10, obtemos 6, que é o primeiro dígito. Em seguida, multiplicamos 6 por 10, resultando em 60. Ao subtrair 64 por 60, obtemos 4, que é o segundo dígito. Após escrever os dois dígitos do valor recebido, a função "ESCRITA" é utilizada para escrever na primeira linha. Em seguida, é chamada a macro para mudar o cursor para a segunda linha, e a função "ESCRITA" realiza novamente a mesma operação.
+	É importante notar que em situações envolvendo a apresentação de valores numéricos, a lógica de exibição passa por algumas alterações. Para isso, primeiro realiza-se a separação dos dígitos do valor recebido, a fim de escrever cada dígito separadamente na tela por meio da macro "WriteCharLCD". Sem essa operação, seria apresentado um caractere correspondente da tabela ASCII, não o valor numérico desejado. Nessa operação, é necessário pegar o valor completo, dividi-lo por 10 para obter o primeiro dígito do número. Em seguida, multiplica-se esse número por 10 e subtrai-o do valor inicial para obter o segundo dígito. Antes de apresentar na tela, soma-se 48 para obter o código correspondente a esse dígito na tabela ASCII. Por exemplo, com o valor inicial 64, ao dividir por 10, obtemos 6, que é o primeiro dígito. Em seguida, multiplicamos 6 por 10, resultando em 60. Ao subtrair 64 por 60, obtemos 4, que é o segundo dígito. Após escrever os dois dígitos do valor recebido, a função "Escrita" é utilizada para escrever na primeira linha. Em seguida, é chamada a macro para mudar o cursor para a segunda linha, além de carregar em um registrador a variável, que está na memória, contendo o texto a ser exibido na segunda linha e a função "Escrita" realiza novamente a sua função.
+
+### UART
+Logo depois, após o entendimento do LCD e o desenvolvimento de algumas telas, o grupo percebeu a necessidade da implementação da UART para poder enviar e receber os dados referentes ao sensor que é a parte primordial do problema. 
+
+Para a integração da UART no sistema, o primeiro passo foi realizar o mapeamento da memória, começando pelo mapeamento do Clock Control Unit (CCU). Esse procedimento é parecido ao mapeamento do GPIO discutido anteriormente, utilizando chamadas de sistema similares. O endereço base associado ao CCU foi carregado no registrador R5 e posteriormente mapeado, armazenando-se em outro registrador para configurações futuras do CCU.
+
+A configuração do CCU teve como objetivo ajustar a saída do Phase-Locked Loop (PLL), selecionar a fonte de clock para APB2 (APB3_CLK_SRC_SEL) e, por fim, habilitar o clock para a UART3. Em seguida, foi necessário realizar o mapeamento específico da UART3, seguindo o mesmo processo discutido anteriormente, solicitando ao sistema acesso à memória e configurando a flag de compartilhamento de memória, com um deslocamento de 0xC00 para posicionar o endereço dentro da região da UART3.
+
+Para concluir a configuração da UART, foram necessárias diversas funções, começando por "pinosUART", que tem como propósito configurar os pinos associados à UART3 conforme informações disponíveis no datasheet [1]. Em seguida, "setarTamanhoDados" estabelece o tamanho dos dados transmitidos pela UART3 como 8 bits por caractere, sendo fundamental para assegurar uma comunicação eficaz entre os dispositivos. Logo depois, "AtivarDLab" ativa o DLAB (Divisor Latch Access Bit), configurando o bit 7. 
+
+Além disso, "SetarValorDLL" e "SetarValorDLH" possuem configurações específicas para limpar os bits correspondentes ao divisor, para essa configuração foi necessário fazer uma conta para ter o valor em bínario para serem postos os 8 bits menos significativos no DLL e os demais bits mais significativos no DLH .Em seguimento ocorre desativação do DLAB, configurando o bit 7 como zero para restaurar o funcionamento normal da UART3. Por fim, a ativação do FIFO ocorre com o carregamento do conteúdo do registrador de controle de fluxo FIFO (FCR), um buffer que melhora a transmissão e recepção de dados aprimorando o desempenho geral da comunicação serial.Também existe duas funções que fazem a comunicação em si de fluxo de bits. Primeiramente a  função EnviarDados escreve dados no registrador THR (UART Transmit Holding Register) para iniciar a transmissão, e posteriormente a função ReceberDados verifica o status do registrador LSR (UART Line Status Register) para determinar se há dados no registrador RBR (UART Receive Buffer Register) antes de ler.
+
+### Main
+O próximo estágio de desenvolvimento, visou tornar o sistema acessível a diversos usuários, então "main.s" foi introduzida para articular a interação entre os módulos falados anteriormente e integrar os recursos disponíveis, incluindo os três botões presentes na placa (Componente 1, 2 e 3, imagem XX). 
+
+Ao inicializar o programa, é apresentado 2 telas que só aparecem nesse momento, como podem ser vistas nas imagem X e X, a primeira desejando boas-vindas, e a segunda que apresenta uma leve explicação sobre o que cada botão faz para poder então preparar o usuário para navegar entre os menus, que estão estruturados conforme na parte “MENU” da imagem XX. Sendo então o botão 1 para voltar à página anterior, o botão 2 para selecionar a opção, e o botão 3 para avançar a opção.
+
+A operação lógica para que essas duas telas sejam apresentadas, ocorre inicialmente carregando em 2 registradores 2 variáveis, uma para cada registrador, que contém o texto da primeira linha, e o da segunda linha respectivamente. Com essa etapa feita é utilizado a função “escreverLinhas” para realizar a escrita do texto nas duas linhas do display, visando resultado ilustrado na imagem X, e para melhorar visualização é utilizada uma função “nanoSleep” para gerar uma pausa no sistema de 2 segundos, e assim só após esse tempo, repetir o processo de salvar outras variáveis nos registradores conforme já citado, e então executar o processo de escrita na tela, apresentando na tela informação conforme imagem X, e após utilizando a função “nanoSleep” novamente para poder interromper o sistema por 3 segundos, um tempo maior por conta da informação mais composta apresentada, e após esse tempo o fluxo do código é direcionado para a função que apresenta o menu inicial.
+
+<p align="center">
+	<img width="300px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/incio_telas.png" />
+	</p>
+
+Conforme visto a lógica de exibição de texto para formar uma tela, ela persiste na exibição dos outros menus. Para cada uma das telas de menu há uma função, em que primeiramente é executado o processo de formar a tela, e após entrar em um loop para aguardar algum dos botões mudar de estado, ou seja ser pressionado, para definir a próxima etapa a ser executada. Havendo entre as telas de menu 3 opções: selecionar a opção, avançar para a próxima tela de menu, ou retornar para a tela de menu anterior. Enquanto nenhum botão é pressionado, permanece na mesma função e a mesma exibição na tela.
 
 
- 
+- Fluxo Normal
+	
+	Posteriormente, para utilizar os recursos do fluxo normal, como a verificação da umidade e temperatura atuais no programa, é necessário selecionar a opção desejada no menu. Após escolher o sensor do qual se deseja obter o dado específico, o valor obtido do sensor é apresentado na tela, e em seguida, é possível retornar ao menu. Internamente, para garantir que esse processo ocorra de maneira fluida para o usuário, algumas etapas precisam ser realizadas.
+	1. **Realizar verificação do sensor**
+	
+	Antes de enviar a requisição de temperatura ou umidade, o sistema verifica informações sobre o sensor selecionado. Com base no valor recebido, existem três situações possíveis. Na primeira, se o sensor estiver ausente, o fluxo direciona imediatamente para a função que informa na tela sobre a ausência do sensor. Na segunda situação, se o sensor estiver com algum problema, o sistema redireciona para o método que exibe na tela que o sensor enfrenta problemas. Por fim, na terceira situação, o fluxo continua normalmente para completar a requisição do usuário.
+
+	2. **Enviar a requisição desejada**
+	
+	Nesta etapa é enviado o comando requisitando temperatura ou umidade, obedecendo o protocolo de comunicação, e além dele o endereço do sensor também é enviado
+	
+	3. **Receber a resposta com o valor lido pelo sensor**
+	4. **Apresentar na tela o valor**, junto com a discriminação de qual tipo ele é. Já estando nessa tela é possível apertar o botão 3 e sair de volta para o menu.
+
+- Situação do Sensor
+  
+	O funcionamento para o usuário referente a requisitar a situação do sensor ocorre com uso dos botões e display LCD para navegar entre os menus até encontrar esta opção, após deve selecionar o sensor que deseja obter a situação, e por fim a informação sobre ele aparece na tela, conforme vídeo LINK mostra. Contudo, para que isso possa ocorrer, outras etapas internas são necessárias. Dentre elas:
+	1. Salvar o valor do sensor escolhido em um dos registradores
+	2. Realizar 2 envios de 1 byte pela UART, o primeiro contendo o código da requisição, e o segundo contendo o endereço do sensor
+	3. Receber os dados via UART, e analisar qual foi o código retornado, para poder ir para função* de exibição do texto da situação na tela adequada
+
+- Fluxo contínuo
+  
+	Para que o sensoriamento contínuo, tanto de umidade como de temperatura funcione, torna-se necessário, como para as outras opções oferecidas e relacionadas ao sensor DHT11, selecionar esta opção no menu, e após escolher o sensor e logo é apresentado o primeiro valor, seja de umidade ou de temperatura conforme foi escolhido previamente, com a apresentação do primeiro valor, uma segunda tela é apresentada pedindo para aguardar enquanto um novo dado vai ser recebido, esse tempo de aguardo é de cerca de 3 segundos, e já há o retorno para apresentar novamente o novo dado recebido. Vale lembrar que o dado fica apresentado na tela por aproximadamente 2 segundos antes de ir para a tela de atualização. Caso deseje sair do sensoriamento contínuo é preciso pressionar o botão 3 até mudar de tela, tempo necessário para impedir a desativação por engano. Conforme a ESP utilizada para comunicação UART, só estava mapeada para 1 sensor, o 15, foi comentado no código a tela de escolha do sensor para desativar o modo contínuo, sendo assim, é selecionado automaticamente o sensor 15, e após apresenta a tela confirmando que o contínuo foi desativado.
+
+- Sair do programa
+  Conforme vontade do usuário do sistema, pode ser possível encerrar o programa pelo menu do sistema. Para isso, basta navegar até este menu, e realizar a seleção usando o botão 2, e assim uma mensagem de despedida é apresentada na tela, e o programa é encerrado
+	
 ## Executando o Projeto
 1. Abra o terminal.
    
@@ -207,6 +262,10 @@ O mesmo procedimento é aplicado para requisitar medição contínua de temperat
 
 https://github.com/nailasuely/IHM_Problem2/assets/98486996/d661181e-ef60-474e-b6b0-0e84ff28518d
 
+## Conclusão
+Por fim, o projeto foi concluído com êxito, visto que todos os testes obteve um resultado satisfatório. O objetivo do projeto era substituir a interface em C do projeto anterior para uma interface mais agradável, incorporando botões e uma tela LCD, permitindo assim uma interação mais direta. No entanto, a eficiência do código pode ser melhorada, uma vez que a UART é reconfigurada a cada vez que os dados são atualizados no modo monitoramento contínuo. Isso impacta na velocidade de atualização das informações.
+
+O vídeo a seguir apresenta a interação com todas as funções do projeto, mostrando todo o funcionamento e todos seus usos. Além disso, também é um tutorial prático de como manipular o programa.
 
 
 ## Tutor 

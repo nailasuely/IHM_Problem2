@@ -18,7 +18,8 @@ gh repo clone nailasuely/IOInterfacesProblem1
 	
 ## Sumário
 - [Apresentação](#apresentação)
-- [Documentação utilizada](#documentacao-utilizada)
+- [Documentação utilizada](#documentação-utilizada)
+- [Hardware utilizado](#hardware-utilizado)
 - [Implementação](#implementação)
 - [Executando o Projeto](#executando-o-projeto)
 - [Testes](#testes)
@@ -34,6 +35,10 @@ Este documento detalha o desenvolvimento de uma comunicação UART entre um micr
 
 Para estabelecer a comunicação com o sensor, empregou-se o projeto do monitor de Sistemas Digitais desenvolvido por Paulo Queiroz durante o semestre 2023.2 na UEFS. No [repositório correspondente](https://github.com/PauloQueirozC/EspCodigoPBL2_20232), estão disponíveis informações detalhadas sobre os comandos utilizados e suas respectivas respostas.
 
+<p align="center">
+  <img width="600px" src="https://github.com/nailasuely/IHM_Problem2/blob/main/resources/COMPUTADOR%20(4).png" />
+</p>
+
 ## Documentação utilizada
 
 - Datasheet da H3 AllWinner: Contém todas as informações relacionadas ao funcionamento dos pinos da SBC Orange Pi Pc Plus, bem como seus endereços de memória. Além disso, o documento conta também com informações sobre como acessar e enviar ou receber dados para os pinos de entrada e saída de propósito geral (GPIO). Também é utilizado no projeto para obter as informações de como realizar o modelo de comunicação Uart e seus respectivos pinos.
@@ -41,6 +46,27 @@ Para estabelecer a comunicação com o sensor, empregou-se o projeto do monitor 
 - Datasheet do display LCD: O modelo do display LCD é o Hitachi HD44780U, e sua documentação nos permite descobrir o algoritmo responsável pela inicialização do display bem como o tempo de execução de cada instrução, que precisa seguir uma sequência específica para inicialização correta, além da representação de cada caractere em forma de número binário.
 
 - Raspberry Pi Assembly Language Programming, ARM Processor Coding: Livro que mostra diversos casos de exemplo na prática do uso da linguagem Assembly na programação de dispositivos de placa única, no livro foi usado a Raspberry Pi. No projeto foi utilizado a placa Orange Pi que tem diversas similaridades com as Raspberry.
+
+## Hardware utilizado
+O hardware empregado para a síntese e testes deste projeto é uma Orange PI PC Plus, equipada com 40 pinos GPIO e um processador H3 Quad-core Cortex-A7 H.265/HEVC 4K, baseado na arquitetura ARM V7. O sistema operacional em execução é o Raspbian com um kernel proprietário, versão 5.15.74-sunxi.
+
+<div align="center">
+	
+| Categoria                                                                            | Especificações                                                                                                                                                               |
+| :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CPU             | H3 Quad-core Cortex-A7 H.265/HEVC 4K                                                                                                                          |
+| GPU             | Mali400MP2 GPU @600MHz
+| Memória (SDRAM)             | 1GB DDR3 (shared with GPU)    |
+| Rede embarcada             | 10/100 Ethernet RJ45     |
+| Fonte de alimentação            | Entrada DC, entradas USB e OTG não servem como fonte de alimentação |
+| Portas USB             | 3 Portas USB 2.0, uma porta OTG USB 2.0     |
+| Periféricos de baixo nível            | 40 pinos    |
+
+<p>
+      Especificações - Orange PI PC Plus
+    </p>
+</div>
+
 
 ## Implementação
 

@@ -18,6 +18,7 @@ gh repo clone nailasuely/IOInterfacesProblem1
 	
 ## Sumário
 - [Apresentação](#apresentação)
+- [Documentação utilizada](#documentacao-utilizada)
 - [Implementação](#implementação)
 - [Executando o Projeto](#executando-o-projeto)
 - [Testes](#testes)
@@ -28,9 +29,18 @@ gh repo clone nailasuely/IOInterfacesProblem1
 
   
 ## Apresentação 
+
 Este documento detalha o desenvolvimento de uma comunicação UART entre um microcontrolador ESP e um computador de placa única Orange Pi PC Plus, além de um sistemas de menus para uso pelo usuário, utilizando a linguagem assembly da arquitetura ARM V7. O projeto consiste em um sistema que tem como objetivo viabilizar a comunicação com sensores, especialmente o DHT11. Para visualização dos dados requisitados, um display LCD 16x2 é utilizado, proporcionando uma apresentação humanamente agradável  das informações.
 
 Para estabelecer a comunicação com o sensor, empregou-se o projeto do monitor de Sistemas Digitais desenvolvido por Paulo Queiroz durante o semestre 2023.2 na UEFS. No [repositório correspondente](https://github.com/PauloQueirozC/EspCodigoPBL2_20232), estão disponíveis informações detalhadas sobre os comandos utilizados e suas respectivas respostas.
+
+## Documentação utilizada
+
+- Datasheet da H3 AllWinner: Contém todas as informações relacionadas ao funcionamento dos pinos da SBC Orange Pi Pc Plus, bem como seus endereços de memória. Além disso, o documento conta também com informações sobre como acessar e enviar ou receber dados para os pinos de entrada e saída de propósito geral (GPIO). Também é utilizado no projeto para obter as informações de como realizar o modelo de comunicação Uart e seus respectivos pinos.
+
+- Datasheet do display LCD: O modelo do display LCD é o Hitachi HD44780U, e sua documentação nos permite descobrir o algoritmo responsável pela inicialização do display bem como o tempo de execução de cada instrução, que precisa seguir uma sequência específica para inicialização correta, além da representação de cada caractere em forma de número binário.
+
+- Raspberry Pi Assembly Language Programming, ARM Processor Coding: Livro que mostra diversos casos de exemplo na prática do uso da linguagem Assembly na programação de dispositivos de placa única, no livro foi usado a Raspberry Pi. No projeto foi utilizado a placa Orange Pi que tem diversas similaridades com as Raspberry.
 
 ## Implementação
 
@@ -96,6 +106,10 @@ A comunicação segue etapas:
 
 	Outro exemplo, é a macro “writeCharLCD” que como seu próprio nome diz ela é capaz de escrever um caractere no display. Com esse propósito, primeiro é configurado o pino RS para indicar que será 		enviado um dado, que nesse caso é o caractere ao invés de uma instrução. Necessariamente uma série de instruções são utilizadas para configurar os pinos D7, D6, D5 E D4  tendo como base o valor do 		caractere fornecido (hex, parâmetro da macro). Logo, para cada um desses pinos o estado do bit correspondente ao valor do caractere é verificado e o pino é setado com base nele. Isso é feito chamando 	a macro GPIOPinTurn que por sua vez utiliza a macro GPIOInState para obter e configurar o estado do bit. Após todo esse processo, um pulso de enable é enviado para indicar que os dados estão prontos 		para serem lidos e depois ocorre uma limpeza dos pinos utilizados para evitar conflitos ou interferências que não são desejadas.
 
+	Para imprimir texto na tela, conforme visualizado nas telas da imagem XX, é necessário operar com a macro "writeCharLCD". No entanto, como essa macro escreve apenas um caractere, é essencial implementar uma lógica para seu uso conforme desejado. Para isso, é preciso indicar dois registradores para apontar a parte da memória onde a variável com o texto está armazenada, um para cada registrador. Após essa etapa, pode-se utilizar a função "escreverLinhas", que segue uma lógica de salvar inicialmente o valor do registrador LR (que guarda o endereço da chamada da função) na pilha. Em seguida, executa a macro de limpeza do display, "Clear Display", e atribui valores a dois registradores: um para definir quantos caracteres serão escritos por linha e o segundo, inicializado como zero, atua como contador. Uma função auxiliar chamada "Escrita" implementa a lógica de escrever caractere a caractere. Esta função também salva o endereço da chamada dela e inicia o loop para escrever cada caractere, incrementando o contador. Quando esse contador iguala ao valor atribuído a um registrador anteriormente, a função é encerrada, pois o papel de escrever naquela linha foi concluído. Após essa etapa, o cursor é movido para a segunda linha para repetir o procedimento de configuração de registradores. No entanto, o valor do segundo registrador, inicialmente configurado antes de iniciar a função, é movido para outro usado na função auxiliar. Após a conclusão do procedimento, ao retornar ao local da chamada, o valor do registrador LR é restaurado ao que foi salvo na pilha, permitindo executar a instrução de retorno à chamada da função "EscreverLinhas".
+
+	É importante notar que em situações envolvendo a apresentação de valores numéricos, a lógica de exibição passa por algumas alterações. Para isso, primeiro realiza-se a separação dos dígitos do valor recebido, a fim de escrever cada dígito separadamente na tela por meio da macro "WriteCharLCD". Sem essa operação, seria apresentado um caractere correspondente da tabela ASCII, não o valor numérico desejado. Nessa operação, é necessário pegar o valor completo, dividi-lo por 10 para obter o primeiro dígito do número. Em seguida, multiplica-se esse número por 10 e subtrai-o do valor inicial para obter o segundo dígito. Antes de apresentar na tela, soma-se 48 para obter o código correspondente a esse dígito na tabela ASCII. Por exemplo, com o valor inicial 64, ao dividir por 10, obtemos 6, que é o primeiro dígito. Em seguida, multiplicamos 6 por 10, resultando em 60. Ao subtrair 64 por 60, obtemos 4, que é o segundo dígito. Após escrever os dois dígitos do valor recebido, a função "ESCRITA" é utilizada para escrever na primeira linha. Em seguida, é chamada a macro para mudar o cursor para a segunda linha, e a função "ESCRITA" realiza novamente a mesma operação.
+
 
  
 ## Executando o Projeto
@@ -139,10 +153,33 @@ Ao analisarmos os resultados no osciloscópio, tornou-se evidente que os dados e
 
 Logo depois foram realizados testes voltados para a verificação da navegação no MENU (Video 1), onde a interação com os botões era testada para assegurar que as transições entre as telas ocorressem conforme o esperado. 
 
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/a10ccb69-e79f-4363-9703-53e6418fb591
+
 Em outro teste realizado (Video 2), simulou-se a ausência de um sensor no sistema, no qual, mesmo não havendo um sensor fisicamente conectado, a interface foi projetada para detectar essa condição e exibir a mensagem "SENSOR AUSENTE". Este teste foi para garantir que o sistema era capaz de identificar corretamente a ausência de sensores, fornecendo uma resposta adequada ao usuário.
-Em seguida, um segundo foi conduzido com um sensor conectado, no caso, o sensor 15 (DHT11). A situação do sensor foi verificada, e a interface exibiu a mensagem "Situação do Sensor: OK" para indicar que o sensor estava operando conforme o esperado.
+Em seguida, um segundo foi conduzido com um sensor conectado, no caso, o sensor 15 (DHT11). A situação do sensor foi verificada, e a interface exibiu a mensagem "Situação do Sensor: OK" para indicar que o sensor estava operando corretamente.
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/416475fb-da7c-4d49-b050-cae51b178c3a
+
+Também foi feito o teste para simular o uso de um sensor no sistema, no qual, este mesmo sensor estava com mal funcionamento, a interface foi projetada para detectar essa condição e exibir a mensagem "SENSOR C. PROB". Este teste foi para garantir que o sistema era capaz de identificar corretamente caso fosse utilizado um sensor que não estivesse funcionando em suas capacidades habituais, fornecendo uma resposta adequada ao usuário. Nessa etapa, o grupo testou com um sensor queimado e removendo o sensor 15 e ambos os resultados seguiram o roteiro esperado.
+
+Agora, ao avançarmos para as solicitações de medidas, inicialmente, requisitamos a medição da umidade ao sensor 15, obtendo uma resposta de 39% no local onde a medição do vídeo foi realizada. 
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/bf928c27-3616-447f-a04d-6555728b83ee
+
+Além disso, em outro teste subsequente (Video 5), solicitamos a medição da temperatura ao mesmo sensor (DHT11), recebendo como resposta 23 graus Celsius no ambiente.
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/f4345cff-d9c6-43dc-9ed9-f2ff2643c4de
+
+Em seguida, para avaliar o funcionamento do fluxo contínuo, realizamos o teste da requisição ao sensor 15 (DHT11) para medição contínua de umidade (GIF 6). Essa operação envolve a comunicação entre a placa Orange Pi e o sensor, garantindo a atualização constante dos valores de umidade por tempo indeterminado, até que essa funcionalidade seja desativada.
 
 
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/bdbe814b-a7bd-4cf8-95ba-8e80fca12c0a
+
+
+O mesmo procedimento é aplicado para requisitar medição contínua de temperatura.
+
+
+https://github.com/nailasuely/IHM_Problem2/assets/98486996/d661181e-ef60-474e-b6b0-0e84ff28518d
 
 
 

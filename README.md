@@ -55,7 +55,7 @@ Para estabelecer a comunicação com o sensor, empregou-se o projeto do monitor 
 - Raspberry Pi Assembly Language Programming, ARM Processor Coding: Livro que mostra diversos casos de exemplo na prática do uso da linguagem Assembly na programação de dispositivos de placa única, no livro foi usado a Raspberry Pi. No projeto foi utilizado a placa Orange Pi que tem diversas similaridades com as Raspberry.
 
 ## Hardware utilizado
-O hardware empregado para a síntese e testes deste projeto é uma Orange PI PC Plus, equipada com 40 pinos GPIO e um processador H3 Quad-core Cortex-A7 H.265/HEVC 4K, baseado na arquitetura ARM V7. O sistema operacional em execução é o Raspbian com um kernel proprietário, versão 5.15.74-sunxi com as espeficificações detalhadas na tabela abaixo.
+O hardware empregado para a síntese e testes deste projeto é uma Orange PI PC Plus, equipada com 40 pinos GPIO e um processador H3 Quad-core Cortex-A7 H.265/HEVC 4K, baseado na arquitetura ARM V7.
 
 <div align="center">
 	
